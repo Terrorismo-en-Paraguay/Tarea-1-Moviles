@@ -12,43 +12,48 @@
             android:layout_height="63dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/textInputLayout" app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/nombre_usuario" app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="126dp">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/nombre_usuario"/>
+                android:hint="@string/nombre_usuario"
+                android:id="@+id/nombre_usuario_contenido"
+        />
+
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="330dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
-            android:layout_marginTop="32dp" android:id="@+id/textInputLayout2">
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/nombre_usuario"
+            android:layout_marginTop="32dp" android:id="@+id/contrasenia_usuario">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/contrasenia_usuario"/>
+                android:hint="@string/contrasenia_usuario"
+                android:id="@+id/contrasenia_contenido"
+        />
     </com.google.android.material.textfield.TextInputLayout>
     <Button
             android:text="@string/iniciar_sesion"
             android:layout_width="328dp"
-            android:layout_height="46dp" android:id="@+id/button"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="46dp" android:id="@+id/iniciar_sesion"
+            app:layout_constraintTop_toBottomOf="@+id/contrasenia_usuario" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="32dp" app:layout_constraintEnd_toEndOf="parent"/>
     <Button
             android:text="@string/sesion_google"
             android:layout_width="328dp"
-            android:layout_height="46dp" android:id="@+id/button2"
-            app:layout_constraintTop_toBottomOf="@+id/button" app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="46dp" android:id="@+id/sesion_google"
+            app:layout_constraintTop_toBottomOf="@+id/iniciar_sesion" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="16dp"/>
     <TextView
             android:text="TextView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/button2" app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="wrap_content" android:id="@+id/contrasenia_olvidada"
+            app:layout_constraintTop_toBottomOf="@+id/sesion_google" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
