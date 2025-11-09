@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="match_parent"
+                                                   tools:context=".fragment.RegisterFragment"
+                                                   android:id="@+id/FragmentoDos">
+
+    <!-- TODO: Update blank fragment layout -->
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="348dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="50dp" android:id="@+id/nuevo_nombre">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/nuevo_nombre"
+                android:id="@+id/usuario_text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="352dp"
+            android:layout_height="58dp"
+            app:layout_constraintTop_toBottomOf="@+id/nuevo_nombre" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="40dp"
+            android:id="@+id/nueva_contrasenia">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/nueva_contrasenia"
+                android:id="@+id/contrasenia_text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="349dp"
+            android:layout_height="63dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/nueva_contrasenia"
+            android:layout_marginTop="40dp" android:id="@+id/repite_contrasenia">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/repite_contrasenia"
+                android:id="@+id/contrasenia2_text"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="350dp"
+            android:layout_height="63dp"
+            app:layout_constraintTop_toBottomOf="@+id/repite_contrasenia" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="40dp"
+            android:id="@+id/fecha_nacimiento">
+
+        <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/fecha_nacimiento"
+                android:id="@+id/fecha_nacimiento_edittext"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+            android:text="@string/registrar"
+            android:layout_width="344dp"
+            android:layout_height="50dp" android:id="@+id/registrar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.492" app:layout_constraintTop_toBottomOf="@+id/fecha_nacimiento"
+            android:layout_marginTop="40dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

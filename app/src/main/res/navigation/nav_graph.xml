@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/nav_host_fragments"
+app:startDestination="@+id/FragmentoUno">
+    <activity
+    android:id="@+id/mainActivity"
+    android:name="com.example.tarea_1.MainActivity"
+    android:label="activity_main"
+    tools:layout = "@layout/activity_main"
+    />
+    <fragment
+    android:id="@+id/FragmentoUno"
+    android:name="com.example.tarea_1.fragment.LoginFragment"
+    android:label="Primer Fragment"
+    tools:layout="@layout/fragment_login"
+    >
+        <action
+        android:id="@+id/login_to_register"
+        app:destination="@+id/FragmentoDos"
+        />
+
+
+    </fragment>
+    <fragment
+    android:id="@+id/FragmentoDos"
+    android:name="com.example.tarea_1.fragment.RegisterFragment"
+    android:label="Segundo Fragmnento"
+    tools:layout="@layout/fragment_register"
+    >
+        <action
+        android:id="@+id/register_to_login"
+        app:destination="@+id/FragmentoUno"
+        />
+
+    </fragment>
+
+</navigation>

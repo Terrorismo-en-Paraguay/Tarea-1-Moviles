@@ -4,7 +4,7 @@
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
-                                                   tools:context=".LoginFragment">
+                                                   tools:context=".LoginFragment" android:id="@+id/FragmentoUno">
 
     <!-- TODO: Update blank fragment layout -->
     <com.google.android.material.textfield.TextInputLayout
@@ -50,7 +50,7 @@
             app:layout_constraintTop_toBottomOf="@+id/iniciar_sesion" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="16dp"/>
     <TextView
-            android:text="TextView"
+            android:text="@string/contrasenia_olvidad"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/contrasenia_olvidada"
             app:layout_constraintTop_toBottomOf="@+id/sesion_google" app:layout_constraintStart_toStartOf="parent"

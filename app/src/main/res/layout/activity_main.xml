@@ -9,9 +9,12 @@
         tools:context=".MainActivity">
     <androidx.fragment.app.FragmentContainerView
             android:layout_width="0dp"
-            android:layout_height="0dp" android:name="com.example.tarea_1.fragment.LoginFragment"
-            android:id="@+id/fragmentContainerView"
+            android:layout_height="0dp" android:name="androidx.navigation.fragment.NavHostFragment"
+            android:id="@+id/nav_host_fragment_container"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:context=".MainActivity"
+            app:navGraph ="@navigation/nav_graph" app:defaultNavHost="true"
+    />
 </androidx.constraintlayout.widget.ConstraintLayout>
