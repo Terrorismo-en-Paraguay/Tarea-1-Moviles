@@ -7,11 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.tarea_1.databinding.FragmentLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import com.example.tarea_1.R
+import com.example.tarea_1.viewmodels.Loginviewmodel
 
 
 class LoginFragment : Fragment() {
@@ -31,33 +35,18 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
-        longitudnombreusuario()
-
-
-        binding.contraseniaContenido.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun afterTextChanged(p0: Editable?) {
-                longitudnombreusuario()
+        val loginviewmodel = ViewModelProvider(this)[Loginviewmodel::class.java]
+        loginviewmodel.isButtonEnabled.observe(viewLifecycleOwner, object: Observer<Boolean> {
+            override fun onChanged(value: Boolean) {
+                binding.iniciarSesion.isEnabled = value
             }
         })
-        binding.nombreUsuarioContenido.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun afterTextChanged(s: Editable?) {
-                longitudnombreusuario()
-            }
-        })
+        binding.nombreUsuarioContenido.addTextChangedListener{loginviewmodel.onTextChanged(it.toString())}
+        binding.contraseniaContenido.addTextChangedListener{loginviewmodel.onTextChanged(it.toString())}
 
         binding.iniciarSesion.setOnClickListener {
             if ((binding.nombreUsuarioContenido.text.toString() == "admin") && binding.contraseniaContenido.text.toString() == "1234")
@@ -82,9 +71,4 @@ class LoginFragment : Fragment() {
 
     }
 
-    private fun longitudnombreusuario() {
-        val nombreusuario = binding.nombreUsuarioContenido.text.toString().length
-        val contrasenia = binding.contraseniaContenido.text.toString().length
-        binding.iniciarSesion.isEnabled = nombreusuario >= 4 && contrasenia >= 4
-    }
 }
