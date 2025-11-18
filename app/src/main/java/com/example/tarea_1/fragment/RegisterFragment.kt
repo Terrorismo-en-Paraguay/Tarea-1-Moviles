@@ -10,9 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.tarea_1.R
 import com.example.tarea_1.databinding.FragmentRegisterBinding
+import com.example.tarea_1.viewmodels.Registerviewmodel
 import java.util.Calendar
 
 class RegisterFragment : Fragment() {
@@ -33,45 +37,16 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        contrasenia()
-        binding.usuarioText.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                contrasenia()
+        val registerviewmodel = ViewModelProvider(this)[Registerviewmodel::class.java]
+        registerviewmodel.isButtonEnabled.observe(viewLifecycleOwner, object: Observer<Boolean> {
+            override fun onChanged(value: Boolean) {
+                binding.registrar.isEnabled = value
             }
         })
-        binding.contraseniaText.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        binding.usuarioText.addTextChangedListener{registerviewmodel.onTextChanged(it.toString())}
+        binding.contraseniaText.addTextChangedListener{registerviewmodel.onTextpasswordChanged(it.toString())}
+        binding.contrasenia2Text.addTextChangedListener{registerviewmodel.onTextpassword2Changed(it.toString())}
 
-            }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                validarContrasenias()
-                contrasenia()
-            }
-        })
-        binding.contrasenia2Text.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-                validarContrasenias()
-                contrasenia()
-            }
-        })
         binding.registrar.setOnClickListener {
             findNavController().navigate(R.id.register_to_login)
         }
@@ -100,15 +75,6 @@ class RegisterFragment : Fragment() {
             day
         )
         dpd.show()
-    }
-
-    private fun contrasenia(){
-        val nombreusuario = binding.usuarioText.text.toString().length
-        val contrasenia = binding.contraseniaText.text.toString().length
-        val contrasenia2 = binding.contrasenia2Text.text.toString().length
-        val contraseniatext = binding.contraseniaText.text.toString()
-        val contrasenia2text = binding.contrasenia2Text.text.toString()
-        binding.registrar.isEnabled = nombreusuario >= 4 && contrasenia >= 4 && contrasenia2 >= 4 && contraseniatext == contrasenia2text
     }
 
     private fun validarContrasenias() {

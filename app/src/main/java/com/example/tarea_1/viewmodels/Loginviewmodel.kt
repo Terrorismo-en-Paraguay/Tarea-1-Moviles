@@ -8,7 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 
 class Loginviewmodel : ViewModel() {
-    private val _inputText = MutableLiveData<String>()
+    private val _inputText = MutableLiveData<String>("")
+    private val _inputpass = MutableLiveData<String>("")
     private val _isButtonEnabled = MutableLiveData<Boolean>()
     val isButtonEnabled: LiveData<Boolean> get()= _isButtonEnabled
 
@@ -22,10 +23,18 @@ class Loginviewmodel : ViewModel() {
         _isButtonEnabled.value = validateInput()
     }
 
+    fun onTextpassword(value: String){
+        _inputpass.value = value
+        _isButtonEnabled.value = validateInput()
+    }
     fun validateInput(): Boolean
     {
-        _inputText.value.toString().length
-        return !_inputText.value.isNullOrBlank()
+        if (_inputText.value.length >= 4 && _inputpass.value.length >= 4){
+            return true
+        }else{
+            return false
+        }
+
     }
 
 }

@@ -46,7 +46,7 @@ class LoginFragment : Fragment() {
             }
         })
         binding.nombreUsuarioContenido.addTextChangedListener{loginviewmodel.onTextChanged(it.toString())}
-        binding.contraseniaContenido.addTextChangedListener{loginviewmodel.onTextChanged(it.toString())}
+        binding.contraseniaContenido.addTextChangedListener{loginviewmodel.onTextpassword(it.toString())}
 
         binding.iniciarSesion.setOnClickListener {
             if ((binding.nombreUsuarioContenido.text.toString() == "admin") && binding.contraseniaContenido.text.toString() == "1234")
