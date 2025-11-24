@@ -11,4 +11,6 @@
     <string name="repite_contrasenia">Confirmar contraseña</string>
     <string name="fecha_nacimiento">Fecha de Nacimiento</string>
     <string name="registrar">Crear cuenta</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
