@@ -39,6 +39,7 @@ class BookAdapter (val context: Context,val items:List<Book>):  RecyclerView.Ada
                 }else{
                     binding.fav.setImageResource(R.drawable.check)
                 }
+                book.favourite = !book.favourite
             }
         }
     }
