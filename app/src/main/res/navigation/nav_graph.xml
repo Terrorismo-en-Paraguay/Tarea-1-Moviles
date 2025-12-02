@@ -19,6 +19,10 @@ app:startDestination="@+id/FragmentoUno">
         android:id="@+id/login_to_register"
         app:destination="@+id/FragmentoDos"
         />
+        <action
+                android:id="@+id/login_to_list"
+                app:destination="@id/tabFragment"
+        />
 
 
     </fragment>
@@ -36,15 +40,8 @@ app:startDestination="@+id/FragmentoUno">
     </fragment>
 
     <fragment
-    android:id="@+id/ListFragmen"
-    android:name="com.example.tarea_1.fragment.ListFragment"
-    android:label="List"
-    app:layout="@layout/fragment_list"
-    >
-        <action
-        android:id="@+id/action_listfragment_to_loginfragment"
-        app:destination="@+id/FragmentoUno"
-        />
-    </fragment>
+            android:id="@+id/tabFragment"
+            android:name="com.example.tarea_1.fragment.TabFragment"
+            android:label="Listas y Favoritos" />
 
 </navigation>

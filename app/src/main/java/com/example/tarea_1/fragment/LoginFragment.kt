@@ -53,6 +53,7 @@ class LoginFragment : Fragment() {
             {
                 val snackbar = Snackbar.make(binding.root, "Login correcto",Snackbar.LENGTH_LONG)
                 snackbar.show()
+                findNavController().navigate(R.id.login_to_list)
             }else{
                 val snackbar = Snackbar.make(binding.root, "Login incorrecto",Snackbar.LENGTH_LONG)
                 snackbar.show()
@@ -62,6 +63,7 @@ class LoginFragment : Fragment() {
         binding.sesionGoogle.setOnClickListener {
             val snackbar = Snackbar.make(binding.root, "Esta funcíon no esta disponible",Snackbar.LENGTH_LONG)
             snackbar.show()
+            findNavController().navigate(R.id.login_to_list)
         }
 
         binding.contraseniaOlvidada.setOnClickListener {
