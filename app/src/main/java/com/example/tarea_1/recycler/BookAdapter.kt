@@ -16,7 +16,7 @@ import com.example.tarea_1.R
 class BookAdapter(
     private val context: Context,
     private val items: List<Book>,
-    private val isFavFragment: Boolean // Bandera para la lista de favoritos
+    private val isFavFragment: Boolean
 ) : RecyclerView.Adapter<BookAdapter.BookViewHolder>() {
 
     private val viewModel: ListViewModel =
