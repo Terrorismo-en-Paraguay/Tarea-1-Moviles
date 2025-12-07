@@ -55,5 +55,6 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.recyclerview)
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation(libs.androidx.core.splashscreen)
 
 }

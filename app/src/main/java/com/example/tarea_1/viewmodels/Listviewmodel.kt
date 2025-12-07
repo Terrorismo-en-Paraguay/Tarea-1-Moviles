@@ -7,7 +7,7 @@ import com.example.tarea_1.R
 class ListViewModel : ViewModel() {
 
     // Lista de libros que debe ser Mutable para cambiar el estado de favorito
-    private val libros = listOf(
+    private val libros: MutableList<Book> = mutableListOf(
         Book(
             "La Odisea",
             "La Odisea es un poema épico griego compuesto por 24 cantos o rapsodias, \u200B atribuido al poeta griego Homero. Se cree que fue compuesta en el siglo VIII a. C. en los asentamientos que tenía Grecia en la costa oeste del Asia Menor. Según otros autores, la Odisea se completa en el siglo VII",
@@ -34,8 +34,6 @@ class ListViewModel : ViewModel() {
     fun getBooks(): List<Book> {
         return libros
     }
-
-    // Función para actualizar el estado de favorito
     fun toggleFavourite(bookTitle: String) {
         val book = libros.find { it.title == bookTitle }
         book?.favourite = book?.favourite != true
