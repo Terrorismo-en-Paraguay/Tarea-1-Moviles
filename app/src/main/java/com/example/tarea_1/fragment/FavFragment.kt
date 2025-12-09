@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.tarea_1.databinding.FragmentFavBinding
@@ -13,27 +12,29 @@ import com.example.tarea_1.recycler.BookAdapter
 import com.example.tarea_1.viewmodels.ListViewModel
 
 class FavFragment : Fragment() {
-    private lateinit var binding: FragmentFavBinding
-    private val viewModel: ListViewModel by activityViewModels()
+    private var _binding: FragmentFavBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var viewModel: ListViewModel
     private lateinit var bookAdapter: BookAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentFavBinding.inflate(inflater, container, false)
+        _binding = FragmentFavBinding.inflate(inflater, container, false)
+        viewModel = ViewModelProvider(requireActivity()).get(ListViewModel::class.java)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val favBooks = viewModel.favorites.value
+        val favBooks = viewModel.getBooks().filter { it.favourite }
         binding.rv.layoutManager = LinearLayoutManager(requireContext())
-        bookAdapter = BookAdapter(requireContext(), false)
+        bookAdapter = BookAdapter(requireActivity(), favBooks, isFavFragment = true)
         binding.rv.adapter = bookAdapter
     }
 
     override fun onResume() {
         super.onResume()
-        val updatedFavBooks = viewModel.toggleFavourite()
+        val updatedFavBooks = viewModel.getBooks().filter { it.favourite }
         binding.rv.adapter = BookAdapter(requireActivity(), updatedFavBooks, isFavFragment = true)
     }
 

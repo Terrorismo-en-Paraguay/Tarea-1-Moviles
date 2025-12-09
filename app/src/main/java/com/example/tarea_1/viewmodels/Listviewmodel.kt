@@ -1,15 +1,13 @@
 package com.example.tarea_1.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import com.example.tarea_1.recycler.Book
 import com.example.tarea_1.R
 
 class ListViewModel : ViewModel() {
 
-    private val libros = MutableLiveData<List<Book>>( listOf(
+    // Lista de libros que debe ser Mutable para cambiar el estado de favorito
+    private val libros = listOf(
         Book(
             "La Odisea",
             "La Odisea es un poema épico griego compuesto por 24 cantos o rapsodias, \u200B atribuido al poeta griego Homero. Se cree que fue compuesta en el siglo VIII a. C. en los asentamientos que tenía Grecia en la costa oeste del Asia Menor. Según otros autores, la Odisea se completa en el siglo VII",
@@ -31,20 +29,15 @@ class ListViewModel : ViewModel() {
             false
         )
 
-    ))
-
-    val Books: LiveData<List<Book>> = libros
-
-    val favorites: LiveData<List<Book>> = MutableLiveData(
-        libros.value?.filter { it.favourite } ?:emptyList()
     )
 
-    fun toggleFavourite(book: Book) {
-        val updateList = libros.value?.map {
-            if(it.title == book.title)it.copy(favourite = !it.favourite) else it
-        }?: emptyList()
+    fun getBooks(): List<Book> {
+        return libros
+    }
 
-        libros.value = updateList
-        (favorites as MutableLiveData).value = updateList.filter { it.favourite }
+    // Función para actualizar el estado de favorito
+    fun toggleFavourite(bookTitle: String) {
+        val book = libros.find { it.title == bookTitle }
+        book?.favourite = book?.favourite != true
     }
 }
