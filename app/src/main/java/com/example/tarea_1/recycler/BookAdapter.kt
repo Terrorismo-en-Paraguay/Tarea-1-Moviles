@@ -12,6 +12,7 @@ import com.example.tarea_1.viewmodels.ListViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.fragment.app.FragmentActivity
 import com.example.tarea_1.R
+import android.media.SoundPool
 
 class BookAdapter(
     private val context: Context,
@@ -35,7 +36,7 @@ class BookAdapter(
         val book = items[position]
         holder.binding.title.text = book.title
         holder.binding.paragraph.text = book.description
-
+        holder.binding.bookImage.setImageResource(book.imageResId)
         updateFavIcon(holder.binding.fav, book.favourite)
 
         if (isFavFragment) {
@@ -46,7 +47,22 @@ class BookAdapter(
                 viewModel.toggleFavourite(book.title)
                 updateFavIcon(holder.binding.fav, book.favourite)
                 notifyItemChanged(position)
+                playSound(context, book.favourite)
             }
+        }
+    }
+    private fun playSound(context: Context, isFavourite: Boolean) {
+        val soundResId = if (isFavourite) {
+            R.raw.fav
+        } else {
+            R.raw.no_fav
+        }
+
+        var mediaPlayer: MediaPlayer? = MediaPlayer.create(context, soundResId)
+        mediaPlayer?.start()
+        mediaPlayer?.setOnCompletionListener { mp ->
+            mp.release()
+            mediaPlayer = null
         }
     }
 

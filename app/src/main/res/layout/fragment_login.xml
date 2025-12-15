@@ -6,14 +6,23 @@
                                                    android:layout_height="match_parent"
                                                    tools:context=".LoginFragment" android:id="@+id/FragmentoUno">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+            android:id="@+id/imageView_png2"
+            android:layout_width="245dp"
+            android:layout_height="179dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.067"/>
     <com.google.android.material.textfield.TextInputLayout
             android:layout_width="336dp"
             android:layout_height="63dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/nombre_usuario" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="126dp">
+            android:id="@+id/nombre_usuario"
+            android:layout_marginTop="30dp" app:layout_constraintHorizontal_bias="0.493"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_png2">
 
         <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"

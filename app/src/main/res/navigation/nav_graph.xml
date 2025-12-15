@@ -22,7 +22,8 @@ app:startDestination="@+id/FragmentoUno">
         <action
                 android:id="@+id/login_to_list"
                 app:destination="@id/tabFragment"
-        />
+                app:popUpTo="@id/FragmentoUno"
+                app:popUpToInclusive="true" />
 
 
     </fragment>
@@ -43,5 +44,14 @@ app:startDestination="@+id/FragmentoUno">
             android:id="@+id/tabFragment"
             android:name="com.example.tarea_1.fragment.TabFragment"
             android:label="Listas y Favoritos" />
+    <fragment
+            android:id="@+id/contactFragment"
+            android:name="com.example.tarea_1.fragment.ContactFragment"
+            android:label="Contacto" />
+
+    <fragment
+            android:id="@+id/preferencesFragment"
+            android:name="com.example.tarea_1.fragment.PreferencesFragment"
+            android:label="Preferencias" />
 
 </navigation>

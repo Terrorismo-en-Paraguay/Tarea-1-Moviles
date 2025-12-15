@@ -61,8 +61,6 @@ class LoginFragment : Fragment() {
         }
 
         binding.sesionGoogle.setOnClickListener {
-            val snackbar = Snackbar.make(binding.root, "Esta funcíon no esta disponible",Snackbar.LENGTH_LONG)
-            snackbar.show()
             findNavController().navigate(R.id.login_to_list)
         }
 
