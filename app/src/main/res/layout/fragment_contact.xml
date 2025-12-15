@@ -4,15 +4,16 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <ImageView
-            android:id="@+id/imageView_png"
+    <VideoView
+            android:id="@+id/videoView"
             android:layout_width="268dp"
             android:layout_height="212dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pizza_esqueleto" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="32dp" app:layout_constraintTop_toBottomOf="@+id/btnEmail"
-            app:layout_constraintVertical_bias="0.403"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/btnEmail"
+            app:layout_constraintVertical_bias="0.403" />
 
     <ImageView
             android:id="@+id/imageView_png2"

@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.tarea_1.R
 import com.example.tarea_1.databinding.FragmentContactBinding
-
+import android.widget.VideoView
 class ContactFragment : Fragment() {
     private lateinit var binding : FragmentContactBinding
 
@@ -44,6 +44,14 @@ class ContactFragment : Fragment() {
             intent.data = Uri.parse("mailto:info@lalibreria.com")
             intent.putExtra(Intent.EXTRA_SUBJECT, "Consulta desde la app")
             startActivity(intent)
+        }
+        val videoPath = "android.resource://" + requireContext().packageName + "/" + R.raw.video
+        val uri = Uri.parse(videoPath)
+        binding.videoView.setVideoURI(uri)
+        binding.videoView.setMediaController(android.widget.MediaController(context))
+        binding.videoView.start()
+        binding.videoView.setOnCompletionListener {
+            binding.videoView.start()
         }
     }
 }
