@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "954901519448",
+    "project_id": "libreria-dbdc7",
+    "storage_bucket": "libreria-dbdc7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:954901519448:android:9b058bcb9263dce7c7fe2d",
+        "android_client_info": {
+          "package_name": "com.example.tarea_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuAmUwGRyqFOOG_xu3TEB7ZllK_LLphSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

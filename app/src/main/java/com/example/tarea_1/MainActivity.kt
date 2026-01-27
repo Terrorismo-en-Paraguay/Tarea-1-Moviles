@@ -18,12 +18,13 @@ import com.example.tarea_1.databinding.ActivityMainBinding
 import com.example.tarea_1.fragment.ListFragment
 import com.example.tarea_1.fragment.TabFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var isTopMenuVisible = false
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,15 +37,14 @@ class MainActivity : AppCompatActivity() {
 
             val showAppBar = destination.id == R.id.tabFragment ||
                     destination.id == R.id.contactFragment ||
-                    destination.id == R.id.preferencesFragment
-            val showMenuItems = destination.id == R.id.tabFragment
+                    destination.id == R.id.preferencesFragment || destination.id == R.id.FavFragment
+            val showMenuItems = destination.id == R.id.tabFragment || destination.id == R.id.FavFragment
 
 
             binding.fab.isVisible = showAppBar
             binding.bottomNavigation.isVisible = destination.id != R.id.FragmentoUno && destination.id != R.id.FragmentoDos
 
             binding.topAppBar.isVisible = showAppBar
-            
 
             val menu = binding.topAppBar.menu
             menu.findItem(R.id.action_search)?.isVisible = showMenuItems
@@ -69,12 +69,12 @@ class MainActivity : AppCompatActivity() {
             isTopMenuVisible = showMenuItems
         }
         binding.bottomNavigation.setupWithNavController(navController)
-
         binding.navigationView.setupWithNavController(navController)
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.tabFragment,
+                R.id.FavFragment,
                 R.id.contactFragment,
                 R.id.preferencesFragment
             ),
@@ -91,6 +91,11 @@ class MainActivity : AppCompatActivity() {
                     binding.drawerLayout.close()
                     true
                 }
+                R.id.FavFragment1 ->{
+                    navController.navigate(R.id.FavFragment)
+                    binding.drawerLayout.close()
+                    true
+                }
                 else -> {
                     NavigationUI.onNavDestinationSelected(menuItem, navController)
                     binding.drawerLayout.close()
@@ -98,6 +103,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         val searchItem = binding.topAppBar.menu.findItem(R.id.action_search)
         val searchView = searchItem.actionView as? android.widget.SearchView
@@ -120,8 +126,13 @@ class MainActivity : AppCompatActivity() {
                     listViewModel.toggleSortOrder()
                     true
                 }
+                R.id.nav_logout_top ->{
+                    navController.navigate(R.id.FragmentoUno)
+                    true
+                }
                 else -> false
             }
         }
+
     }
 }

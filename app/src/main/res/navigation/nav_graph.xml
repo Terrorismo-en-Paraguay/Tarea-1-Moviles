@@ -10,6 +10,11 @@ app:startDestination="@+id/FragmentoUno">
     tools:layout = "@layout/activity_main"
     />
     <fragment
+    android:id="@+id/FavFragment"
+    android:name="com.example.tarea_1.fragment.FavFragment"
+    android:label="Fav Fragment"
+    />
+    <fragment
     android:id="@+id/FragmentoUno"
     android:name="com.example.tarea_1.fragment.LoginFragment"
     android:label="Primer Fragment"

@@ -12,4 +12,9 @@
             android:icon="@drawable/ic_sort"
             android:title="Ordenar"
             app:showAsAction="ifRoom" />
+    <item
+            android:id="@+id/nav_logout_top"
+            android:icon="@drawable/ic_power"
+            android:title="Cerrar Sesion"
+            app:showAsAction="ifRoom"/>
 </menu>

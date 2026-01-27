@@ -5,6 +5,11 @@
             android:icon="@drawable/ic_dashboard"
             android:title="Lista" />
     <item
+        android:id="@+id/FavFragment"
+        android:icon="@drawable/ic_heart"
+        android:title="Fav"
+    />
+    <item
             android:id="@+id/contactFragment"
             android:icon="@drawable/ic_call"
             android:title="Contacto" />
