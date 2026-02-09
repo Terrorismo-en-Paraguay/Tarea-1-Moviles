@@ -1,0 +1,247 @@
+# Guía Detallada de Implementación: Autenticación
+
+Esta guía explica paso a paso qué hace cada componente del diagrama y qué código debes colocar en cada archivo.
+
+> [!IMPORTANT]
+> Se han detectado archivos duplicados en tu proyecto (carpetas `ui` y `firebase`). Te recomendamos organizar tu código. Para esta guía, asumiremos la estructura más lógica, pero asegúrate de editar el archivo correcto.
+
+## 1. Configuración de Dependencias
+**Responsabilidad:** Asegurar que tu app tenga las librerías necesarias para Firebase y Corutinas.
+**Acción:** Abre [app/build.gradle.kts](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/build.gradle.kts) y verifica que tienes estas dependencias. Si no, agrégalas:
+
+```kotlin
+dependencies {
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-auth")
+
+    // Coroutines & Lifecycle (Necesarias para 'suspend' y 'viewModelScope')
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
+    // ... tus otras dependencias
+}
+```
+
+## 2. FirebaseProvider
+**Responsabilidad:** Proporcionar una única instancia de `FirebaseAuth` para toda la aplicación (Singleton). Esto evita tener que llamar a `getInstance()` en todas partes.
+**Archivo:** [com/example/tarea_1/firebase/FirebaseProvider.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/firebase/FirebaseProvider.kt) (o donde lo tengas).
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.firebase
+
+import com.google.firebase.auth.FirebaseAuth
+
+object FirebaseProvider {
+    val auth: FirebaseAuth
+        get() = FirebaseAuth.getInstance()
+}
+```
+
+## 3. AuthDataSource
+**Responsabilidad:** Es la "fuente de datos". Se encarga de hablar directamente con Firebase. Aquí van las llamadas a `signInWithEmailAndPassword`, `createUser...`, etc. Oculta la complejidad de Firebase al resto de la app.
+**Archivo:** [com/example/tarea_1/ui/AuthDataSource.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/ui/AuthDataSource.kt)
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.ui
+
+import com.example.tarea_1.firebase.FirebaseProvider
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.tasks.await
+
+class AuthDataSource {
+    private val auth get() = FirebaseProvider.auth
+
+    suspend fun signUpWithEmail(email: String, pass: String): Result<FirebaseUser> = runCatching {
+        auth.createUserWithEmailAndPassword(email, pass).await().user!!
+    }
+
+    suspend fun signInWithEmail(email: String, pass: String): Result<FirebaseUser> = runCatching {
+        auth.signInWithEmailAndPassword(email, pass).await().user!!
+    }
+
+    fun signOut() {
+        auth.signOut()
+    }
+
+    fun currentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
+
+    suspend fun sendPasswordReset(email: String): Result<Unit> = runCatching {
+        auth.sendPasswordResetEmail(email).await()
+    }
+}
+```
+
+## 4. AuthRepository
+**Responsabilidad:** Es el intermediario. El ViewModel le pide datos al Repositorio, y el Repositorio decide de dónde sacarlos (en este caso, del DataSource). Permite cambiar la fuente de datos en el futuro sin romper el ViewModel.
+**Archivo:** [com/example/tarea_1/ui/AuthRepository.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/ui/AuthRepository.kt)
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.ui
+
+import com.google.firebase.auth.FirebaseUser
+
+class AuthRepository(private val ds: AuthDataSource) {
+    suspend fun signUp(email: String, pass: String): Result<FirebaseUser> = ds.signUpWithEmail(email, pass)
+    suspend fun signIn(email: String, pass: String): Result<FirebaseUser> = ds.signInWithEmail(email, pass)
+    fun signOut() = ds.signOut()
+    fun currentUser(): FirebaseUser? = ds.currentUser()
+    suspend fun resetPassword(email: String): Result<Unit> = ds.sendPasswordReset(email)
+}
+```
+
+## 5. ServiceLocator
+**Responsabilidad:** "Inyección de dependencias" manual. Crea y guarda las instancias de [AuthDataSource](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/ui/AuthDataSource.kt#3-5) y `AuthRepository` para que no crees objetos nuevos cada vez.
+**Archivo:** [com/example/tarea_1/firebase/ServiceLocator.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/firebase/ServiceLocator.kt) (o [ui/ServiceLocator.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/ui/ServiceLocator.kt))
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.firebase // Ajusta el paquete si está en ui
+
+import com.example.tarea_1.ui.AuthDataSource
+import com.example.tarea_1.ui.AuthRepository
+
+object ServiceLocator {
+    // 'by lazy' significa que se crea solo cuando se usa por primera vez
+    private val authDataSource: AuthDataSource by lazy {
+        AuthDataSource()
+    }
+
+    val authRepository: AuthRepository by lazy {
+        AuthRepository(authDataSource)
+    }
+}
+```
+
+## 6. UserUiState
+**Responsabilidad:** Definir los estados posibles de la pantalla de usuario. ¿Está cargando? ¿Hubo error? ¿Está autenticado?
+**Archivo:** `com/example/tarea_1/ui/UserUiState.kt`
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.ui
+
+import com.google.firebase.auth.FirebaseUser
+
+sealed interface UserUiState {
+    object Idle : UserUiState // Estado inicial
+    object Loading : UserUiState // Cargando...
+    data class Authenticated(val user: FirebaseUser) : UserUiState // Usuario logueado
+    data class Error(val message: String) : UserUiState // Error ocurrido
+}
+```
+
+## 7. AuthViewModel
+**Responsabilidad:** Gestionar la lógica de la vista. Recibe eventos del usuario (click en login), llama al Repositorio, y actualiza el estado (`UserUiState`) para que la vista reaccione.
+**Ubicación:** `com/example/tarea_1/viewmodels/AuthViewModel.kt` (tendrás que crearlo si no existe, o usar [Loginviewmodel.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/viewmodels/Loginviewmodel.kt) y adaptarlo).
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.viewmodels
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.tarea_1.ui.AuthRepository
+import com.example.tarea_1.ui.UserUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
+
+    private val _userUiState = MutableStateFlow<UserUiState>(UserUiState.Idle)
+    val userUiState: StateFlow<UserUiState> = _userUiState.asStateFlow()
+
+    fun signIn(email: String, pass: String) {
+        if (email.isBlank() || pass.isBlank()) {
+               _userUiState.value = UserUiState.Error("Email y contraseña requeridos")
+               return
+        }
+        
+        viewModelScope.launch {
+            _userUiState.value = UserUiState.Loading
+            val result = repo.signIn(email, pass)
+            result.onSuccess { user ->
+                _userUiState.value = UserUiState.Authenticated(user)
+            }.onFailure { error ->
+                _userUiState.value = UserUiState.Error(error.message ?: "Error de autenticación")
+            }
+        }
+    }
+    
+    // Agrega métodos similares para signUp, signOut, etc.
+}
+```
+
+## 8. AuthViewModelFactory
+**Responsabilidad:** Enseñar a Android cómo crear tu `AuthViewModel`, pasándole el `AuthRepository` que necesita en su constructor.
+**Archivo:** [com/example/tarea_1/viewmodels/AuthViewModelFactory.kt](file:///c:/Trabajos/Moviles/Tarea-1-Moviles%20%281%29/Tarea-1-Moviles/app/src/main/java/com/example/tarea_1/viewmodels/AuthViewModelFactory.kt)
+**Acción:** Copia este código:
+
+```kotlin
+package com.example.tarea_1.viewmodels
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.tarea_1.firebase.ServiceLocator // O donde esté ServiceLocator
+
+class AuthViewModelFactory : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(AuthViewModel::class.java)) {
+            return AuthViewModel(ServiceLocator.authRepository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+```
+
+## 9. LoginFragment
+**Responsabilidad:** La pantalla que ve el usuario. Observa el `UserUiState` y pinta la pantalla (muestra barra de carga, navega a otra pantalla o muestra error).
+**Archivo:** Tu Fragmento de Login existente.
+**Acción:** Integrar el ViewModel y observadores.
+
+```kotlin
+// En tu LoginFragment:
+
+private val viewModel: AuthViewModel by viewModels { AuthViewModelFactory() }
+
+override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+
+    // Configurar botón
+    binding.loginButton.setOnClickListener {
+        viewModel.signIn(binding.email.text.toString(), binding.password.text.toString())
+    }
+
+    // Observar estado
+    viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.userUiState.collect { state ->
+                when(state) {
+                    is UserUiState.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is UserUiState.Authenticated -> {
+                        binding.progressBar.visibility = View.GONE
+                        // Navegar a la siguiente pantalla
+                    }
+                    is UserUiState.Error -> {
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+                    }
+                    is UserUiState.Idle -> {
+                        binding.progressBar.visibility = View.GONE
+                    }
+                }
+            }
+        }
+    }
+}
+```
