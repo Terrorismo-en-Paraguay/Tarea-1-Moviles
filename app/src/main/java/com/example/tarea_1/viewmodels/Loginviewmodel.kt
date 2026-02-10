@@ -2,13 +2,20 @@ package com.example.tarea_1.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.snackbar.Snackbar
+import androidx.lifecycle.viewModelScope
+import com.example.tarea_1.ui.AuthRepository
+import com.example.tarea_1.ui.UserUIState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class Loginviewmodel : ViewModel() {
-    private val _inputText = MutableLiveData<String>("")
+class Loginviewmodel(private val repo: AuthRepository) : ViewModel() {
+
+    private val _userUIState = MutableStateFlow<UserUIState>(UserUIState.Idle)
+    val userUIState: StateFlow<UserUIState> get() = _userUIState.asStateFlow()
+    private val _inputUser = MutableLiveData<String>("")
     private val _inputpass = MutableLiveData<String>("")
     private val _isButtonEnabled = MutableLiveData<Boolean>()
     val isButtonEnabled: LiveData<Boolean> get()= _isButtonEnabled
@@ -19,7 +26,7 @@ class Loginviewmodel : ViewModel() {
 
     fun onTextChanged(value: String)
     {
-        _inputText.value = value
+        _inputUser.value = value
         _isButtonEnabled.value = validateInput()
     }
 
@@ -29,12 +36,27 @@ class Loginviewmodel : ViewModel() {
     }
     fun validateInput(): Boolean
     {
-        if (_inputText.value.length >= 4 && _inputpass.value.length >= 4){
+        if (_inputUser.value.isNotEmpty() && _inputpass.value.length >= 6 && _inputUser.value.isNotBlank() && _inputpass.value.isNotBlank()) {
             return true
         }else{
             return false
         }
 
     }
+
+    fun iniciarSesion(email: String, password: String){
+        viewModelScope.launch {
+            _userUIState.value = UserUIState.Loading
+            val result = repo.loguearte(email, password)
+            result.onSuccess {
+                user -> _userUIState.value = UserUIState.Success(user)
+            }.onFailure {
+                val error = _userUIState.value as UserUIState.Error
+                _userUIState.value = UserUIState.Error(error.message ?: "Login incorrecto")
+            }
+        }
+    }
+
+
 
 }

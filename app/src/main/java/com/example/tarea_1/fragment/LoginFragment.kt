@@ -15,11 +15,13 @@ import androidx.navigation.fragment.findNavController
 import com.example.tarea_1.databinding.FragmentLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import com.example.tarea_1.R
+import com.example.tarea_1.viewmodels.LoginViewModelFactory
 import com.example.tarea_1.viewmodels.Loginviewmodel
-
 
 class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
+
+    private val loginviewmodel: Loginviewmodel by authviewModels { LoginViewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
