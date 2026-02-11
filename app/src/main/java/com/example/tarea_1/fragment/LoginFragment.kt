@@ -75,7 +75,7 @@ class LoginFragment : Fragment() {
                             Snackbar.make(view, state.message, Snackbar.LENGTH_LONG).show()
                         }
                         is  UserUIState.Idle -> {
-                            binding.iniciarSesion.visibility = View.GONE
+                            binding.iniciarSesion.visibility = View.VISIBLE
                         }
                     }
                 }

@@ -11,16 +11,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.tarea_1.R
 import com.example.tarea_1.databinding.FragmentRegisterBinding
+import com.example.tarea_1.ui.UserUIState
+import com.example.tarea_1.viewmodels.RegisterViewModelFactory
 import com.example.tarea_1.viewmodels.Registerviewmodel
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class RegisterFragment : Fragment() {
     private lateinit var binding: FragmentRegisterBinding
+
+    private val registerviewmodel: Registerviewmodel by viewModels { RegisterViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -37,7 +47,6 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val registerviewmodel = ViewModelProvider(this)[Registerviewmodel::class.java]
         registerviewmodel.isButtonEnabled.observe(viewLifecycleOwner, object: Observer<Boolean> {
             override fun onChanged(value: Boolean) {
                 binding.registrar.isEnabled = value
@@ -68,10 +77,34 @@ class RegisterFragment : Fragment() {
                 validarContrasenias()
             }
         })
-
         binding.registrar.setOnClickListener {
-            findNavController().navigate(R.id.register_to_login)
+            registerviewmodel.registrarCuenta(binding.usuarioText.text.toString(), binding.contraseniaText.text.toString())
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                registerviewmodel.userUIState.collect {state ->
+                    when (state) {
+                        is UserUIState.Loading -> {
+                            binding.registrar.visibility = View.VISIBLE
+                        }
+                        is UserUIState.Success -> {
+                            binding.registrar.visibility = View.GONE
+                            findNavController().navigate(R.id.register_to_login)
+                            Snackbar.make(binding.registrar, "Registro perfecto", Snackbar.LENGTH_SHORT).show()
+                        }
+                        is UserUIState.Error -> {
+                            binding.registrar.visibility = View.VISIBLE
+                            Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
+                        }
+                        is UserUIState.Idle -> {
+                            binding.registrar.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+
+
         binding.fechaNacimientoEdittext.setOnClickListener {
             datepicker(binding.fechaNacimientoEdittext)
         }

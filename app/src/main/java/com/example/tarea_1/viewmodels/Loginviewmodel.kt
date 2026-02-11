@@ -50,8 +50,7 @@ class Loginviewmodel(private val repo: AuthRepository) : ViewModel() {
             val result = repo.loguearte(email, password)
             result.onSuccess {
                 user -> _userUIState.value = UserUIState.Success(user)
-            }.onFailure {
-                val error = _userUIState.value as UserUIState.Error
+            }.onFailure { error ->
                 _userUIState.value = UserUIState.Error(error.message ?: "Login incorrecto")
             }
         }
