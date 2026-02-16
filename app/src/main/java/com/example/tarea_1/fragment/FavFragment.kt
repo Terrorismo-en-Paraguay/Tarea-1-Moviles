@@ -14,6 +14,7 @@ import com.example.tarea_1.recycler.BookAdapter
 import com.example.tarea_1.viewmodels.ListViewModel
 import androidx.fragment.app.activityViewModels
 import com.example.tarea_1.R
+import com.example.tarea_1.viewmodels.ListViewModelFactory
 
 class FavFragment : Fragment() {
     private var _binding: FragmentFavBinding? = null
@@ -21,62 +22,57 @@ class FavFragment : Fragment() {
     private lateinit var viewModel: ListViewModel
     private lateinit var bookAdapter: BookAdapter
 
+    private var favoritesList = mutableListOf<Book>()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFavBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity())[ListViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity(), ListViewModelFactory())[ListViewModel::class.java]
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val favBooks = viewModel.getBooks().filter { it.favourite }
-        Log.d("FavFragment", "Libros favoritos encontrados: ${favBooks.size}")
-        binding.rv.layoutManager = LinearLayoutManager(requireContext())
-        bookAdapter = BookAdapter(requireActivity(), favBooks.toMutableList(), isFavFragment = true)
+        bookAdapter = BookAdapter(requireActivity(), mutableListOf(), isFavFragment = true)
         binding.rv.adapter = bookAdapter
+        binding.rv.layoutManager = LinearLayoutManager(requireContext())
+
+        viewModel.libros.observe(viewLifecycleOwner) { todosLosLibros ->
+            favoritesList = todosLosLibros.filter { it.favourite }.toMutableList()
+            applyFiltersAndSort()
+        }
         viewModel.searchQuery.observe(viewLifecycleOwner) {
-            applyFilters()
+            applyFiltersAndSort()
         }
 
         viewModel.isSortAscending.observe(viewLifecycleOwner) {
-            applyFilters()
+            applyFiltersAndSort()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val updatedFavBooks = viewModel.getBooks().filter { it.favourite }
-        (binding.rv.adapter as? BookAdapter)?.updateBooks(updatedFavBooks)
-        val fab = requireActivity().findViewById<android.view.View>(R.id.fab)
-        fab?.visibility = android.view.View.GONE
-        applyFilters()
+        val fab = requireActivity().findViewById<View>(R.id.fab)
+        fab?.visibility = View.GONE
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-    private fun applyFilters() {
-
-        val allBooks = viewModel.getBooks()
-        val favBooks = allBooks.filter { it.favourite }
-
+    private fun applyFiltersAndSort() {
         val query = viewModel.searchQuery.value ?: ""
         val isAscending = viewModel.isSortAscending.value ?: true
-
         val filteredList = if (query.isBlank()) {
-            favBooks
+            favoritesList
         } else {
-            favBooks.filter { it.title.contains(query, ignoreCase = true) }
+            favoritesList.filter { it.title.contains(query, ignoreCase = true) }
         }
-
         val sortedList = if (isAscending) {
             filteredList.sortedBy { it.title }
         } else {
             filteredList.sortedByDescending { it.title }
         }
-
         bookAdapter.updateBooks(sortedList)
     }
+
 }

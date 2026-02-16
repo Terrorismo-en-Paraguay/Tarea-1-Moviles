@@ -73,6 +73,17 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setupWithNavController(navController)
         binding.navigationView.setupWithNavController(navController)
 
+        val headerView = binding.navigationView.getHeaderView(0)
+        val navHeaderUsername = headerView.findViewById<android.widget.TextView>(R.id.burguerHeader)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val firebaseUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+            if (firebaseUser != null) {
+                navHeaderUsername.text = firebaseUser.displayName
+                    ?: firebaseUser.email
+                            ?: "Usuario"
+            }
+        }
+
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.tabFragment,

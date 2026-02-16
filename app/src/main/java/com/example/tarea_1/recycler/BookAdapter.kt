@@ -36,7 +36,8 @@ class BookAdapter(
         val book = items[position]
         holder.binding.title.text = book.title
         holder.binding.paragraph.text = book.description
-        holder.binding.bookImage.setImageResource(book.imageResId)
+        val img = if (book.imageResId != 0) book.imageResId else R.drawable.ic_default_book
+        holder.binding.bookImage.setImageResource(img)
         updateFavIcon(holder.binding.fav, book.favourite)
 
         if (isFavFragment) {
@@ -44,7 +45,7 @@ class BookAdapter(
         } else {
             holder.binding.fav.isEnabled = true
             holder.binding.fav.setOnClickListener {
-                viewModel.toggleFavourite(book.title)
+                viewModel.toggleFavourite(book)
                 updateFavIcon(holder.binding.fav, book.favourite)
                 notifyItemChanged(position)
                 playSound(context, book.favourite)

@@ -1,9 +1,14 @@
 package com.example.tarea_1.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.tarea_1.R
+import com.example.tarea_1.viewmodels.ListViewModelFactory
 
 class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
@@ -29,9 +35,35 @@ class ListFragment : Fragment() {
     val books: LiveData<List<Book>> = _books
 
 
+
+    private fun nuevoLibro() {
+        val dialogView = layoutInflater.inflate(R.layout.nuevolibro, null)
+        val alertDialog = android.app.AlertDialog.Builder(requireContext()).setView(dialogView).create()
+        alertDialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val etTitle = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etTitle)
+        val etDescription = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etDescription)
+        val cbFavorite = dialogView.findViewById<CheckBox>(R.id.cbFavorite)
+        val btnSubmit = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnSubmit)
+
+        btnSubmit.setOnClickListener {
+            val title = etTitle.text.toString()
+            val description = etDescription.text.toString()
+            val fav = cbFavorite.isChecked
+            if (title.isNotEmpty() && description.isNotEmpty()) {
+                viewModel.saveBook(title, description, fav)
+                alertDialog.dismiss()
+            }else{
+                Toast.makeText(requireContext(), "Fields cannot be empty", Toast.LENGTH_SHORT).show()
+            }
+        }
+        alertDialog.show()
+    }
+
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListBinding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(requireActivity()).get(ListViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), ListViewModelFactory()).get(ListViewModel::class.java)
         return binding.root
     }
 
@@ -51,20 +83,23 @@ class ListFragment : Fragment() {
         binding.rv.adapter?.notifyDataSetChanged()
         val fab = requireActivity().findViewById<android.view.View>(R.id.fab)
         fab?.visibility = android.view.View.VISIBLE
+        fab?.setOnClickListener {
+            nuevoLibro()
+        }
     }
 
 
 
     private fun setupRecyclerView() {
-        var allBooks = viewModel.getBooks().toMutableList()
-        originalList.clear()
-        originalList.addAll(allBooks)
         binding.rv.layoutManager = LinearLayoutManager(requireContext())
-        bookAdapter = BookAdapter(requireActivity(), allBooks, isFavFragment = false)
+        bookAdapter = BookAdapter(requireActivity(), mutableListOf(), isFavFragment = false)
         binding.rv.adapter = bookAdapter
-        books.observe(viewLifecycleOwner) { filteredList ->
-            bookAdapter.updateBooks(filteredList)
+        viewModel.libros.observe(viewLifecycleOwner) { listaDeFirestore ->
+            originalList.clear()
+            originalList.addAll(listaDeFirestore)
+            applyFilterAndSort()
         }
+        viewModel.fetchBooks()
 
     }
 
@@ -87,5 +122,6 @@ class ListFragment : Fragment() {
             filteredList.sortedByDescending { it.title }
         }
         _books.value = sortedList
+        bookAdapter.updateBooks(sortedList)
     }
 }

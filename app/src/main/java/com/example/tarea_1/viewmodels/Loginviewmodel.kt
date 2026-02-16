@@ -36,7 +36,7 @@ class Loginviewmodel(private val repo: AuthRepository) : ViewModel() {
     }
     fun validateInput(): Boolean
     {
-        if (_inputUser.value.isNotEmpty() && _inputpass.value.length >= 6 && _inputUser.value.isNotBlank() && _inputpass.value.isNotBlank()) {
+        if (_inputUser.value?.isNotEmpty() == true && _inputpass.value?.length ?: 0 >= 6 && _inputUser.value.isNotBlank() && _inputpass.value.isNotBlank()) {
             return true
         }else{
             return false
@@ -44,14 +44,19 @@ class Loginviewmodel(private val repo: AuthRepository) : ViewModel() {
 
     }
 
-    fun iniciarSesion(email: String, password: String){
+    fun iniciarSesion(email: String, password: String) {
         viewModelScope.launch {
             _userUIState.value = UserUIState.Loading
-            val result = repo.loguearte(email, password)
-            result.onSuccess {
-                user -> _userUIState.value = UserUIState.Success(user)
-            }.onFailure { error ->
-                _userUIState.value = UserUIState.Error(error.message ?: "Login incorrecto")
+            try {
+                val result = repo.loguearte(email, password)
+
+                result.onSuccess { user ->
+                    _userUIState.value = UserUIState.Success(user)
+                }.onFailure { error ->
+                    _userUIState.value = UserUIState.Error(error.message ?: "Login incorrecto")
+                }
+            } catch (e: Exception) {
+                _userUIState.value = UserUIState.Error(e.message ?: "Error de conexión")
             }
         }
     }

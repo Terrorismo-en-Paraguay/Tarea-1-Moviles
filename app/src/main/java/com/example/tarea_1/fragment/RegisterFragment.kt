@@ -20,6 +20,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.tarea_1.R
 import com.example.tarea_1.databinding.FragmentRegisterBinding
+import com.example.tarea_1.ui.NewUserUiState
 import com.example.tarea_1.ui.UserUIState
 import com.example.tarea_1.viewmodels.RegisterViewModelFactory
 import com.example.tarea_1.viewmodels.Registerviewmodel
@@ -78,25 +79,25 @@ class RegisterFragment : Fragment() {
             }
         })
         binding.registrar.setOnClickListener {
-            registerviewmodel.registrarCuenta(binding.usuarioText.text.toString(), binding.contraseniaText.text.toString())
+            registerviewmodel.registrarCuenta(binding.usuarioText.text.toString(), binding.contraseniaText.text.toString(), binding.fechaNacimientoEdittext.text.toString())
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 registerviewmodel.userUIState.collect {state ->
                     when (state) {
-                        is UserUIState.Loading -> {
+                        is NewUserUiState.Loading -> {
                             binding.registrar.visibility = View.VISIBLE
                         }
-                        is UserUIState.Success -> {
+                        is NewUserUiState.Created -> {
                             binding.registrar.visibility = View.GONE
                             findNavController().navigate(R.id.register_to_login)
                             Snackbar.make(binding.registrar, "Registro perfecto", Snackbar.LENGTH_SHORT).show()
                         }
-                        is UserUIState.Error -> {
+                        is NewUserUiState.Error -> {
                             binding.registrar.visibility = View.VISIBLE
                             Snackbar.make(binding.root, state.message, Snackbar.LENGTH_SHORT).show()
                         }
-                        is UserUIState.Idle -> {
+                        is NewUserUiState.Idle -> {
                             binding.registrar.visibility = View.VISIBLE
                         }
                     }
